@@ -4,15 +4,11 @@ import authRoutes from './routes/auth.routes.js';
 import docRoutes from './routes/docs.routes.js';
 import docMembersRoutes from "./routes/docs.members.routes.js";
 import cookieParser from 'cookie-parser';
+import { httpCorsOptions } from './Config/cors.js';
 
 
 const app = express();
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
+app.use(cors(httpCorsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);

@@ -5,11 +5,18 @@
 import { Server } from "socket.io";
 import socketAuthMiddleware from "./authSockets.js";
 import registerRoomHandlers from "./rooms.js";
+import { isOriginAllowed } from "../Config/cors.js";
 
 export function initializeSocketServer(httpServer) {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin(origin, callback) {
+        if (isOriginAllowed(origin)) {
+          callback(null, true);
+          return;
+        }
+        callback(new Error(`Socket CORS blocked for origin: ${origin}`));
+      },
       methods: ["GET", "POST"],
       credentials: true,
     },
