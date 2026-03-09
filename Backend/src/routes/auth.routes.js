@@ -7,13 +7,14 @@ import authMiddleware from '../middlewares/auth.js';
 import { createResponse } from '../utils/response.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import { authSchemas } from '../validators/apiSchemas.js';
+import { authLimiter } from '../middlewares/rateLimit.js';
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', validateRequest(authSchemas.register), registerUser);
-router.post('/login', validateRequest(authSchemas.login), loginUser);
-router.post('/google', validateRequest(authSchemas.google), googleLogin);
+router.post('/register', authLimiter, validateRequest(authSchemas.register), registerUser);
+router.post('/login', authLimiter, validateRequest(authSchemas.login), loginUser);
+router.post('/google', authLimiter, validateRequest(authSchemas.google), googleLogin);
 
 // Protected route
 router.get('/me', authMiddleware, (req, res) => {
