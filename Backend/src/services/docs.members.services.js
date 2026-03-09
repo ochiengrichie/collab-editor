@@ -15,7 +15,7 @@ function ownerCheck(documentId, userId) {
 
 // A) Invite member (owner only)
 export const inviteMember = async (req, res) => {
-    const client = await db.connect();
+  const client = await db.connect();
 
   const { email, role } = req.body;
   const documentId = req.params.id;
@@ -31,7 +31,7 @@ export const inviteMember = async (req, res) => {
 
         await client.query('BEGIN');
     // Check if the requester is the owner of the document
-    ownerCheckResult = await ownerCheck(documentId, userId);
+    const ownerCheckResult = await ownerCheck(documentId, userId);
     if (ownerCheckResult.rows.length === 0) {
         return createResponse(res, false, null, 'Only owners can invite members', 403);
     }
@@ -108,7 +108,7 @@ export const listMembers = async (req, res) => {
 // C) Update member role (owner only)
 export const updateMemberRole = async (req, res) => {
   const documentId = req.params.id;
-  const { memberId } = req.params.memberId;
+  const { memberId } = req.params;
   const { newRole } = req.body;
   const userId = req.user.id;
   const client = await db.connect();
@@ -121,7 +121,7 @@ export const updateMemberRole = async (req, res) => {
     try {  
         await client.query('BEGIN');
     // Check if the requester is the owner of the document
-    ownerCheckResult = await ownerCheck(documentId, userId);
+    const ownerCheckResult = await ownerCheck(documentId, userId);
     if (ownerCheckResult.rows.length === 0) {
         return createResponse(res, false, null, 'Only owners can update member roles', 403);
     }
@@ -170,7 +170,7 @@ export const updateMemberRole = async (req, res) => {
 // D) Remove member (owner only)
 export const removeMember = async (req, res) => {
   const documentId = req.params.id;
-    const { memberId } = req.params.memberId;
+    const { memberId } = req.params;
     const userId = req.user.id;
     const client = await db.connect();
     if (!memberId) {
@@ -179,7 +179,7 @@ export const removeMember = async (req, res) => {
     try {  
         await client.query('BEGIN');
     // Check if the requester is the owner of the document
-    ownerCheckResult = await ownerCheck(documentId, userId);
+    const ownerCheckResult = await ownerCheck(documentId, userId);
     if (ownerCheckResult.rows.length === 0) {
         return createResponse(res, false, null, 'Only owners can remove members', 403);
     }

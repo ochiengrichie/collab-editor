@@ -1,6 +1,8 @@
 import db from "../db/index.js";
 import { getLatestDocState, appendSnapshot } from "../services/docs.persistence.service.js";
 import { getDocState, setDocState, scheduleSave } from "./saveQueue.js";
+import { socketSchemas } from "../validators/socketSchemas.js";
+import validateSocketPayload from "./validateSocketPayload.js";
 
 function roomName(docId) {
   return `doc:${docId}`;
@@ -22,10 +24,9 @@ export function registerRoomHandlers(io) {
     console.log(`Socket connected: ${email || "unknown"} (id=${userId})`);
 
     // JOIN DOCUMENT
-    socket.on("join-document", async ({ documentId }) => {
-      if (!documentId) {
-        return socket.emit("error", { message: "documentId is required" });
-      }
+    socket.on("join-document", async (payload) => {
+      if (!validateSocketPayload(payload, socketSchemas.joinDocument, socket)) return;
+      const { documentId } = payload;
 
       try {
         // 1) Membership check
@@ -68,8 +69,9 @@ export function registerRoomHandlers(io) {
     });
 
     // LEAVE DOCUMENT
-    socket.on("leave-document", ({ documentId }) => {
-      if (!documentId) return;
+    socket.on("leave-document", (payload) => {
+      if (!validateSocketPayload(payload, socketSchemas.leaveDocument, socket)) return;
+      const { documentId } = payload;
 
       const room = roomName(documentId);
       socket.leave(room);
@@ -90,10 +92,9 @@ export function registerRoomHandlers(io) {
       Server checks if baseVersion matches current cached version.
       If mismatch, server tells client to resync (doc-resync).
      */
-    socket.on("doc-update", async({ documentId, content, baseVersion }) => {
-      if (!documentId) {
-        return socket.emit("error", { message: "documentId is required" });
-      }
+    socket.on("doc-update", async(payload) => {
+      if (!validateSocketPayload(payload, socketSchemas.docUpdate, socket)) return;
+      const { documentId, content, baseVersion } = payload;
 
        // Enforce role: only editor/owner can edit
       try {

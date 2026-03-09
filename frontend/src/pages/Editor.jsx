@@ -205,7 +205,7 @@ export default function Editor() {
     socket.emit("doc-update", {
       documentId,
       content: next,
-      version: version + 1,
+      baseVersion: version,
     });
   }
 
