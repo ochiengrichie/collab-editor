@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import { httpCorsOptions } from './Config/cors.js';
 import helmet from 'helmet';
 import { globalLimiter } from './middlewares/rateLimit.js';
+import { notFoundHandler, errorHandler } from './middlewares/errorHandler.js';
 
 
 const app = express();
@@ -21,11 +22,10 @@ app.use(globalLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", docRoutes);
 app.use("/api/docs", docMembersRoutes);
-
-
+app.use(notFoundHandler);
+app.use(errorHandler);
 app.get("/" ,(req, res) =>{
     res.status(200).send("API is running...");
-})
-
+});
 
 export default app;
