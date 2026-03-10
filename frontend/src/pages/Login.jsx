@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { login as loginApi, googleLogin } from "../api/auth.api";
 import { useAuth } from "../context/AuthContext";
 import { GoogleLogin } from '@react-oauth/google';
+import loginImg from "../assets/loginimg.svg";
 import "../cssStyles/auth.css"
 
 export default function Login() {
@@ -45,7 +46,8 @@ export default function Login() {
   return (
     <div className="login-container" >
       <div className="login-component" style={{ marginBottom: 24 }}>
-        <h1>Login</h1>
+        <h1>Welcome Back!</h1>
+        <p style={{ color: "grey" }}>Login to continue</p>
 
         <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
           <input
@@ -94,9 +96,12 @@ export default function Login() {
           {error ? <p style={{ color: "red" }}>{error}</p> : null}
         </form>
 
-        <p style={{ marginTop: 12 }}>
-          No account? <Link to="/register">Register</Link>
+        <p style={{ marginTop: 12 , color: "grey"}}>
+          Don't have an account? <Link to="/register">Register</Link>
         </p>
+      </div>
+      <div className="login-image">
+        <img src={loginImg} alt="Login Illustration" />
       </div>
     </div>
   );

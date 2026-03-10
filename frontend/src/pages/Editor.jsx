@@ -259,7 +259,7 @@ export default function Editor() {
           <ul>
             {members.map((m) => (
               <li key={m.id} style={{ marginBottom: 8 }}>
-                {m.email} — {m.role}
+                {m.name} — {m.role}
                 {user?.id === m.id ? " (you)" : null}
                 {isOwner ? (
                   <span style={{ marginLeft: 8 }}>

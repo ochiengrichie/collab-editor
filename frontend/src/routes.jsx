@@ -16,9 +16,8 @@ function RootRedirect() {
 
 export default function AppRoutes(){
     return (
-        <div>
-            <Header isLoggedIn={!!useAuth().user} logout={useAuth().logout}/>
-            <main style={{ padding: 24 }}>
+        <div>     
+            <main>
             <Routes>
                 <Route path="/" element={<RootRedirect />}/>
                 <Route path="/login" element={<Login />}/>
@@ -27,6 +26,7 @@ export default function AppRoutes(){
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
+                            <Header logout={useAuth().logout}/>
                             <Dashboard />
                         </ProtectedRoute>
                     }

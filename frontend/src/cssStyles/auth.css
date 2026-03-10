@@ -1,15 +1,48 @@
 .login-container {
-    height: 100vh;
+  background-color: rgb(214, 210, 210);
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
 }
 
 .login-component {
-  background-color: grey;
+  background-color: aliceblue;
   padding: 30px;
-  width: 200px;
+  width: 280px;
   border-radius: 10px;
   box-shadow: 20 10px 25px rgba(81, 56, 223, 0.1);
   text-align: center;
 }
+
+.login-component h1 {
+  color:blue
+}
+.login-component button {
+  background-color: rgb(2, 2, 49);
+  color: white;
+}
+
+.login-component form input {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  color: aliceblue;
+}
+
+.login-image {
+  flex: 0 1 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-image img {
+  display: block;
+  width: min(100%, 420px);
+  height: auto;
+}
+
