@@ -10,6 +10,7 @@
   padding: 28px 32px;
   background:
     linear-gradient(180deg, rgba(245, 247, 255, 0.94), rgba(237, 241, 255, 0.86));
+  color: #213547;
 }
 
 .dashboard-content {
@@ -134,6 +135,55 @@
   color: #55649d;
 }
 
+.dashboard-search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 250px;
+}
+
+.dashboard-search-input {
+  flex: 1;
+  border: 1px solid rgba(160, 171, 227, 0.46);
+  border-radius: 20px;
+  padding: 10px 16px;
+  color: #24346f;
+  font: inherit;
+  background: rgba(244, 246, 255, 0.95);
+  transition: border-color 180ms ease;
+}
+
+.dashboard-search-input:focus {
+  outline: 3px solid rgba(84, 117, 255, 0.22);
+  outline-offset: 2px;
+}
+
+.dashboard-search-button {
+  border: 0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #2f74ff, #5b92ff);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 16px rgba(58, 106, 241, 0.2);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.dashboard-search-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgba(58, 106, 241, 0.24);
+}
+
+.dashboard-search-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
 @media (max-width: 900px) {
   .dashboard-shell {
     flex-direction: column;
@@ -147,5 +197,55 @@
   .dashboard-toolbar {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
   }
+
+  .dashboard-search-form {
+    min-width: auto;
+  }
+}
+
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.doc-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(143, 154, 214, 0.3);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 20px rgba(102, 120, 196, 0.06);
+}
+
+.doc-card-title {
+  font-weight: 700;
+  color: #24346f;
+}
+
+.doc-card-meta {
+  font-size: 0.85rem;
+  color: #55649d;
+  margin-top: 4px;
+}
+
+.doc-card-button {
+  border: 0;
+  background: linear-gradient(135deg, #2f74ff, #5b92ff);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.doc-card-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(58, 106, 241, 0.24);
 }

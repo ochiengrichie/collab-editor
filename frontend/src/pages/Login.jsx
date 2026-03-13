@@ -74,7 +74,6 @@ export default function Login() {
           <GoogleLogin
             onSuccess={async (credentialResponse) => {
               const credentials =credentialResponse.credential;
-              console.log("Google login successful", credentialResponse);
               try {
                 setError("");
                 const res = await googleLogin(credentials);

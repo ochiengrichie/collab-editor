@@ -4,6 +4,7 @@ import { openDocument } from "../api/docs.api";
 import { inviteMember, listMembers, removeMember, updateMemberRole } from "../api/members.api";
 import { useAuth } from "../context/AuthContext";
 import { socket } from "../realtime/socket";
+import "../cssStyles/editor.css";
 
 export default function Editor() {
   const { id: documentId } = useParams();
@@ -19,6 +20,7 @@ export default function Editor() {
   const [inviteRole, setInviteRole] = useState("viewer");
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [showInviteForm, setShowInviteForm ] = useState(false);
+  const [showMembers, setShowMembers] = useState(false);
 
   const { user } = useAuth();
   const currentRole = members.find((m) => m.id === user?.id)?.role;
@@ -210,88 +212,119 @@ export default function Editor() {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "30px auto" }}>
-      <h1>{title}</h1>
-      <p style={{ fontSize: 12, color: "#666" }}>
-        Status: {status} | Version: {version} | Online: {onlineUsers.length}
-      </p>
-
-      <div style={{ margin: "12px 0 20px" }}>
-        <h3>Collaborators</h3>
-        {membersError ? <p style={{ color: "red" }}>{membersError}</p> : null}
-
-        {isOwner ? (
-          <div>
-            <button type="button"
-            onClick={() => setShowInviteForm((prev) => !prev)}>Invite a new person</button>
-          
-            {showInviteForm? (
-              <form onSubmit={handleInvite} style={{ marginBottom: 12 }}>
-                <input
-                  type="email"
-                  placeholder="Invite by email"
-                  value={inviteEmail}
-                  onChange={(e) => setInviteEmail(e.target.value)}
-                  style={{ padding: 8, width: "60%" }}
-                />
-                <select
-                  value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value)}
-                  style={{ marginLeft: 8 }}
-                >
-                  <option value="viewer">viewer</option>
-                  <option value="editor">editor</option>
-                  <option value="owner">owner</option>
-                </select>
-                <button type="submit" style={{ marginLeft: 8 }}>
-                  Invite
-                </button>
-              </form>
-            ) : null}
-          </div>
-        ) : null}
-
-        {loadingMembers ? (
-          <p>Loading members...</p>
-        ) : members.length === 0 ? (
-          <p>No members yet.</p>
-        ) : (
-          <ul>
-            {members.map((m) => (
-              <li key={m.id} style={{ marginBottom: 8 }}>
-                {m.name} — {m.role}
-                {user?.id === m.id ? " (you)" : null}
-                {isOwner ? (
-                  <span style={{ marginLeft: 8 }}>
-                    <select
-                      value={m.role}
-                      onChange={(e) => handleRoleChange(m.id, e.target.value)}
-                      disabled={m.id === user?.id}
-                      style={{ marginRight: 8 }}
-                    >
-                      <option value="viewer">viewer</option>
-                      <option value="editor">editor</option>
-                      <option value="owner">owner</option>
-                    </select>
-                    <button
-                      onClick={() => handleRemove(m.id)}
-                      disabled={m.id === user?.id}
-                    >
-                      Remove
-                    </button>
-                  </span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
+    <div className="editor-container">
+      <div className="editor-header">
+        <div>
+          <h1 className="editor-title">{title}</h1>
+          <p className="editor-status">
+            Status: {status} | Version: {version} | Online: {onlineUsers.length}
+          </p>
+        </div>
+        <div className="editor-header-buttons">
+          {isOwner && (
+            <button
+              type="button"
+              className="editor-header-button"
+              onClick={() => setShowInviteForm((prev) => !prev)}
+            >
+              Invite Members
+            </button>
+          )}
+          <button
+            type="button"
+            className="editor-header-button secondary"
+            onClick={() => setShowMembers((prev) => !prev)}
+          >
+            {showMembers ? 'Hide Users' : 'View All Users'}
+          </button>
+        </div>
       </div>
+
+      {showInviteForm && isOwner && (
+        <div className="editor-section">
+          <form onSubmit={handleInvite} className="editor-form">
+            <div className="editor-form-row">
+              <input
+                type="email"
+                placeholder="Invite by email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                className="editor-input"
+              />
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value)}
+                className="editor-select"
+              >
+                <option value="viewer">viewer</option>
+                <option value="editor">editor</option>
+                <option value="owner">owner</option>
+              </select>
+              <button type="submit" className="editor-submit-button">
+                Invite
+              </button>
+              <button
+                type="button"
+                className="editor-submit-button secondary"
+                onClick={() => setShowInviteForm(false)}
+              >
+                Close
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {showMembers && (
+        <div className="editor-section">
+          <h3 className="editor-section-title">Collaborators</h3>
+          {membersError ? <p className="editor-error">{membersError}</p> : null}
+
+          {loadingMembers ? (
+            <p className="editor-state">Loading members...</p>
+          ) : members.length === 0 ? (
+            <p className="editor-state">No members yet.</p>
+          ) : (
+            <ul className="editor-members-list">
+              {members.map((m) => (
+                <li key={m.id} className="editor-member-item">
+                  <div className="editor-member-info">
+                    {m.name} — {m.role}
+                    {user?.id === m.id ? <span className="editor-member-you"> (you)</span> : null}
+                  </div>
+                  {isOwner ? (
+                    <div className="editor-member-controls">
+                      <select
+                        value={m.role}
+                        onChange={(e) => handleRoleChange(m.id, e.target.value)}
+                        disabled={m.id === user?.id}
+                        className="editor-select-small"
+                      >
+                        <option value="viewer">viewer</option>
+                        <option value="editor">editor</option>
+                        <option value="owner">owner</option>
+                      </select>
+                      <button
+                        onClick={() => handleRemove(m.id)}
+                        disabled={m.id === user?.id}
+                        className="editor-remove-button"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <textarea
         value={content}
         onChange={handleChange}
         rows={18}
-        style={{ width: "100%", padding: 12 }}
+        className="editor-textarea"
         placeholder="Start typing..."
       />
     </div>

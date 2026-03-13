@@ -1,13 +1,11 @@
 import { NavLink } from "react-router-dom";
 import "../cssStyles/sidebar.css";
+//import { createDocument } from "../api/docs.api";
 
 const navItems = [
   {
     label: "Dashboard",
     to: "/dashboard",
-    isActive: (match, location) => {
-        return location.pathname === "/dashboard" && !location.search.includes("view=");
-    },
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 3.25 3.75 10v10.25a1 1 0 0 0 1 1H10v-6h4v6h5.25a1 1 0 0 0 1-1V10L12 3.25Z" />
