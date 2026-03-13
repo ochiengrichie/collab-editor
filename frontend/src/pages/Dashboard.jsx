@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { logout as logoutApi } from "../api/auth.api";
 import { createDocument, getMyDocuments } from "../api/docs.api";
 import DocList from "../components/docs/DocList";
 import { useAuth } from "../context/AuthContext";
+import "../cssStyles/dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, refreshMe } = useAuth();
+  const { user } = useAuth();
 
   const [docs, setDocs] = useState([]);
   const [loadingDocs, setLoadingDocs] = useState(true);
@@ -38,16 +38,6 @@ export default function Dashboard() {
     }
   }
 
-  async function handleLogout() {
-    try {
-      await logoutApi();
-    } catch (err) {
-      console.log("Failed to log out", err?.response?.data || err.message);
-    } finally {
-      await refreshMe();
-      navigate("/login");
-    }
-  }
 
   async function handleCreateDoc(e) {
     e.preventDefault();
@@ -81,51 +71,54 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto" }}>
-      <h1>Dashboard</h1>
-      <p>Logged in as: {user?.email || "unknown"}</p>
+    <div className="dashboard">
+      <div className="dashboard-content">
+        <section className="dashboard-hero">
+          <h1 className="dashboard-title">
+            Welcome back, {user?.name || user?.email || "User"}
+          </h1>
+          <p className="dashboard-subtitle">
+            Manage and open your collaborative documents from one place.
+          </p>
+        </section>
 
-      <button onClick={handleLogout}>Logout</button>
-      <button onClick={() => setShowCreate((v) => !v)}>
-        {showCreate ? "Cancel" : "Add Document"}
-      </button>
+        <hr style={{ margin: "20px 0" }} />
+        <h2>Documents</h2>
 
-      <hr style={{ margin: "20px 0" }} />
-      <h2>Documents</h2>
+        {showCreate ? (
+          <form onSubmit={handleCreateDoc} style={{ marginBottom: 16 }}>
+            <input
+              type="text"
+              placeholder="Document title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              style={{ padding: 8, width: "70%" }}
+            />
+            <textarea
+              placeholder="Document content"
+              value={contentText}
+              onChange={(e) => setContentText(e.target.value)}
+              rows={4}
+              style={{ padding: 8, width: "100%", marginTop: 8 }}
+            />
+            <button
+              type="submit"
+              disabled={!canCreate || creating}
+              style={{ marginLeft: 8 }}
+            >
+              {creating ? "Creating..." : "Create Document"}
+            </button>
+          </form>
+        ) : null}
 
-      {showCreate ? (
-        <form onSubmit={handleCreateDoc} style={{ marginBottom: 16 }}>
-          <input
-            type="text"
-            placeholder="Document title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ padding: 8, width: "70%" }}
-          />
-          <textarea
-            placeholder="Document content"
-            value={contentText}
-            onChange={(e) => setContentText(e.target.value)}
-            rows={4}
-            style={{ padding: 8, width: "100%", marginTop: 8 }}
-          />
-          <button
-            type="submit"
-            disabled={!canCreate || creating}
-            style={{ marginLeft: 8 }}
-          >
-            {creating ? "Creating..." : "Create Document"}
-          </button>
-        </form>
-      ) : null}
+        {docsError ? <p style={{ color: "red" }}>{docsError}</p> : null}
 
-      {docsError ? <p style={{ color: "red" }}>{docsError}</p> : null}
-
-      {loadingDocs ? (
-        <p>Loading documents...</p>
-      ) : (
-        <DocList documents={docs} onOpen={(doc) => navigate(`/docs/${doc.id}`)} />
-      )}
+        {loadingDocs ? (
+          <p>Loading documents...</p>
+        ) : (
+          <DocList documents={docs} onOpen={(doc) => navigate(`/docs/${doc.id}`)} />
+        )}
+      </div>
     </div>
   );
 }

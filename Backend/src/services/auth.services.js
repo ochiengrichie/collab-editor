@@ -23,9 +23,9 @@ const COOKIE_OPTIONS = {
 };
 
 export const registerUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
     // Basic input validation
-    if (!email || !password || password.length < 6 || !/\S+@\S+\.\S+/.test(email)) {
+    if (!name || !email || !password || password.length < 6 || !/\S+@\S+\.\S+/.test(email)) {
         return createResponse(res, false, null, 'Invalid email or password format', 400);
     }
     try {
@@ -36,8 +36,8 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await db.query(
-      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id, email',
-      [email, hashedPassword]
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, email',
+      [name, email, hashedPassword]
     );
     const user = newUser.rows[0];
 

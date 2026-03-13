@@ -73,6 +73,7 @@ export const inviteMember = async (req, res) => {
 export const listMembers = async (req, res) => {
   const documentId = req.params.id;
     const userId = req.user.id;
+    const username = req.user.name;
     const client = await db.connect();
     try {  
     // Check if the requester is a member of the document

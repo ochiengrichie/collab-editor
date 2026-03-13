@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Routes , Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext.jsx";
 import Login from "./pages/Login.jsx";
@@ -6,6 +7,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Editor from "./pages/Editor.jsx";
 import ProtectedRoute from "./Components/Layout/ProtectedRoute.jsx";
 import Header from "./pages/Header.jsx";
+import SideBar from "./pages/SideBar.jsx";
 
 function RootRedirect() {
     const { user, loading } = useAuth();
@@ -14,7 +16,27 @@ function RootRedirect() {
     return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
 }
 
+function DashboardLayout({ logout }) {
+    const [showCreate, setShowCreate] = useState(false);
+
+    function toggleCreateDocument() {
+        setShowCreate((prev) => !prev);
+    }
+
+    return (
+        <>
+            <Header logout={logout}/>
+            <div className="dashboard-shell">
+                <SideBar onCreateDocument={toggleCreateDocument} />
+                <Dashboard showCreate={showCreate} setShowCreate={setShowCreate} />
+            </div>
+        </>
+    );
+}
+
 export default function AppRoutes(){
+    const { logout } = useAuth();
+
     return (
         <div>     
             <main>
@@ -26,8 +48,7 @@ export default function AppRoutes(){
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <Header logout={useAuth().logout}/>
-                            <Dashboard />
+                            <DashboardLayout logout={logout} />
                         </ProtectedRoute>
                     }
                 />
