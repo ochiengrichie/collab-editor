@@ -135,7 +135,7 @@ export default function Dashboard({ showCreate = false, setShowCreate = () => {}
         {showNameSection ? 
         <section className="dashboard-hero">
           <h1 className="dashboard-title">
-            Welcome back, {user?.name}
+            Welcome back, {user?.name || user?.email || "User"}
           </h1>
           <p className="dashboard-subtitle">
             Manage and open your collaborative documents from one place.
