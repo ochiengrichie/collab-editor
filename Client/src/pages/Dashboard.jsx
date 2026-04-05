@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { createDocument, getMyDocuments } from "../api/docs.api";
-import DocList from "../components/docs/DocList";
+import DocList from "../components/Docs/DocList";
 import { useAuth } from "../context/AuthContext";
 import "../cssStyles/dashboard.css";
 
