@@ -35,7 +35,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const newUser = await db.query(
-      'INSERT INTO collab_users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
+      'INSERT INTO collab_users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email',
       [name, email, hashedPassword]
     );
     const user = newUser.rows[0];
@@ -65,7 +65,7 @@ export const loginUser = async (req, res) => {
 
     const user = userResult.rows[0];
 
-    const passwordMatch = await bcrypt.compare(password, user.password);    
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);    
     
     if (!passwordMatch) {
       return createResponse(res, false, null, 'Invalid email or password', 401);
