@@ -8,9 +8,10 @@ import {
 export const authSchemas = {
   register: {
     body: {
-      required: ["email", "password"],
+      required: ["name","email", "password"],
       additionalProperties: false,
       properties: {
+        name: { type: "string", minLength: 1, maxLength: 100 },
         email: { type: "string", format: "email" },
         password: { type: "string", minLength: 6, maxLength: MAX_PASSWORD_LENGTH },
       },
