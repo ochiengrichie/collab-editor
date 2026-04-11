@@ -88,6 +88,19 @@ export function validateSchema(target, schema, locationName) {
       if (rules.maxLength !== undefined && value.length > rules.maxLength) {
         pushIssue(issues, field, `must be at most ${rules.maxLength} characters`);
       }
+      const patterns = rules.patterns || (rules.pattern ? [{
+        pattern: rules.pattern,
+        message: rules.patternMessage,
+      }] : []);
+      for (const patternRule of patterns) {
+        if (!patternRule.pattern.test(value)) {
+          pushIssue(
+            issues,
+            field,
+            patternRule.message || "has an invalid format"
+          );
+        }
+      }
       if (rules.format === "email" && !validateEmail(value)) {
         pushIssue(issues, field, "must be a valid email");
       }

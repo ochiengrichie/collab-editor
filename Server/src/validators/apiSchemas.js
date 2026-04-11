@@ -5,6 +5,25 @@ import {
   ROLES,
 } from "./common.js";
 
+const PASSWORD_RULES = [
+  {
+    pattern: /[A-Z]/,
+    patternMessage: "must contain at least one uppercase letter",
+  },
+  {
+    pattern: /[a-z]/,
+    patternMessage: "must contain at least one lowercase letter",
+  },
+  {
+    pattern: /\d/,
+    patternMessage: "must contain at least one number",
+  },
+  {
+    pattern: /[@$!%*?&]/,
+    patternMessage: "must contain at least one special character (@$!%*?&)",
+  },
+];
+
 export const authSchemas = {
   register: {
     body: {
@@ -13,7 +32,15 @@ export const authSchemas = {
       properties: {
         name: { type: "string", minLength: 1, maxLength: 100 },
         email: { type: "string", format: "email" },
-        password: { type: "string", minLength: 6, maxLength: MAX_PASSWORD_LENGTH },
+        password: {
+          type: "string",
+          minLength: 6,
+          maxLength: MAX_PASSWORD_LENGTH,
+          patterns: PASSWORD_RULES.map((rule) => ({
+            pattern: rule.pattern,
+            message: rule.patternMessage,
+          })),
+        },
       },
     },
   },

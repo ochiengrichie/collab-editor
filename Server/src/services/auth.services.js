@@ -28,10 +28,7 @@ const COOKIE_OPTIONS = {
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
-    // Basic input validation
-    if (!name || !email || !password || password.length < 6 || !/\S+@\S+\.\S+/.test(email)) {
-        return createResponse(res, false, null, 'Invalid email or password format', 400);
-    }
+
     try {
     const existingUser = await db.query('SELECT * FROM collab_users WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
@@ -59,11 +56,6 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
-    // Basic input validation
-
-    if (!email || !password) {
-        return createResponse(res, false, null, 'Email and password are required', 400);
-    }
 
     try {
     const userResult = await db.query('SELECT * FROM collab_users WHERE email = $1', [email]);
@@ -90,9 +82,6 @@ export const loginUser = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   const { token } = req.body;
-  if (!token) {
-    return createResponse(res, false, null, 'Google token is required', 400);
-  }
   try {
     const ticket = await client.verifyIdToken({idToken: token, audience: CLIENT_ID});
     const payload = ticket.getPayload();
