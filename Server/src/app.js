@@ -22,10 +22,12 @@ app.use(globalLimiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/docs", docRoutes);
 app.use("/api/docs", docMembersRoutes);
-app.use(notFoundHandler);
-app.use(errorHandler);
+
 app.get("/" ,(req, res) =>{
     res.status(200).send("API is running...");
 });
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

@@ -9,6 +9,11 @@ const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 const saltRounds = 10;
 
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+if (!JWT_REFRESH_SECRET) {
+  throw new Error("JWT_REFRESH_SECRET is missing. Add it to your .env file.");
+}
+
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is missing. Add it to your .env file.");
@@ -39,10 +44,13 @@ export const registerUser = async (req, res) => {
       [name, email, hashedPassword]
     );
     const user = newUser.rows[0];
-
+    
     const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
     res.cookie('token', token, COOKIE_OPTIONS);
     return createResponse(res, true, { user }, null, 201);
+    const refreshToken = jwt.sign({ id: user.id }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+    // You can choose to store the refresh token in the database if you want to implement token revocation
+    return createResponse(res, true, { user, refreshToken }, null, 201);
     } catch (error) {
     console.error('Error registering user:', error);
     return createResponse(res, false, null, 'Internal server error, Registration failed', 500);

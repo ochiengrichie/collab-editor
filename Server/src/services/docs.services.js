@@ -1,4 +1,3 @@
-// in this file we will carry out DB queries + rules (membership checks) + response formatting
 import db from '../db/index.js';
 import { createResponse } from '../utils/response.js';
 
