@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import db  from '../db/index.js';
 import { createResponse } from '../utils/response.js';
 import { OAuth2Client } from 'google-auth-library';
+import { validateEmail, validateName, validatePasswordStrength } from '../validators/auth.validator.js';
 
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -28,6 +29,27 @@ const COOKIE_OPTIONS = {
 
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
+
+    // Basic input validation
+    if (!email || !password ) {
+        return createResponse(res, false, null, 'Email and password are required', 400);
+    }
+
+    //validate name
+    const nameValidation = validateName(name);
+    if (!nameValidation.isValid) {
+        return createResponse(res, false, null, nameValidation.errors.join(', '), 400);
+    }
+
+    // Validate email format
+    if (!validateEmail(email)) {
+        return createResponse(res, false, null, 'Invalid email format', 400);
+    }
+    // Validate password strength
+    const passwordValidation = validatePasswordStrength(password);
+    if (!passwordValidation.isValid) {
+        return createResponse(res, false, null, passwordValidation.errors.join(', '), 400);
+    }
 
     try {
     const existingUser = await db.query('SELECT * FROM collab_users WHERE email = $1', [email]);
@@ -56,6 +78,16 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
     const { email, password } = req.body;
+    // Basic input validation
+
+    if (!email || !password) {
+        return createResponse(res, false, null, 'Email and password are required', 400);
+    }
+
+      // Validate email format
+    if (!validateEmail(email)) {
+        return createResponse(res, false, null, 'Invalid email format', 400);
+    }
 
     try {
     const userResult = await db.query('SELECT * FROM collab_users WHERE email = $1', [email]);
@@ -82,16 +114,19 @@ export const loginUser = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   const { token } = req.body;
+  if (!token) {
+    return createResponse(res, false, null, 'Google token is required', 400);
+  }
   try {
     const ticket = await client.verifyIdToken({idToken: token, audience: CLIENT_ID});
     const payload = ticket.getPayload();
     const email = payload.email;
     const name = payload.name;
-    const goodleSub = payload.sub; // Google's unique user ID for this user. You can use this to check if the user has previously logged in with Google.
+    const goodleSub = payload.sub; // Google's unique user ID for this user. 
     let userResult = await db.query('SELECT * FROM collab_users WHERE email = $1', [email]);
     let user = userResult.rows[0];
     if (user){
-      //Link google account if not linked before (optional)
+  
       if (!user.google_sub) {
         await db.query('UPDATE collab_users SET google_id = $1 , auth_provider=$2 WHERE id = $3', [goodleSub, 'google', user.id]);
       }
